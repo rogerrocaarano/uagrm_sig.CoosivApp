@@ -4,4 +4,5 @@ public class Route
 {
     public int Id { get; set; }
     public List<ServiceAccount> ServiceAccounts { get; set; }
+    public Point? StartingPoint { get; set; }
 }

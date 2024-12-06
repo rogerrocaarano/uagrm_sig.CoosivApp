@@ -13,6 +13,7 @@
     <ItemGroup>
       <ProjectReference Include="..\uagrm_sig.CoosivApp.Application\uagrm_sig.CoosivApp.Application.csproj" />
       <ProjectReference Include="..\uagrm_sig.CoosivApp.Domain\uagrm_sig.CoosivApp.Domain.csproj" />
+      <ProjectReference Include="..\uagrm_sig.CoosivApp.Infrastructure\uagrm_sig.CoosivApp.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
