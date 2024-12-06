@@ -8,6 +8,11 @@ public class ObtenerRutasResponseTable : IDto
     public List<ObtenerRutasResponseItem> Items { get; set; }
     public string Serialize()
     {
-        return JsonSerializer.Serialize(this);
+        var serializerOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        };
+        return JsonSerializer.Serialize(this, serializerOptions);
     }
 }

@@ -27,16 +27,14 @@ public class SoapClient(IHttpClientFactory httpClientFactory, string baseUrl, st
 
     private string BuildSoapEnvelope(string bodyContent)
     {
-        var sb = new StringBuilder();
-        sb.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        sb.Append("<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-        sb.Append("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
-        sb.Append("xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">");
-        sb.Append("<soap12:Body>");
-        sb.Append(bodyContent);
-        sb.Append("</soap12:Body>");
-        sb.Append("</soap12:Envelope>");
-        return sb.ToString();
+        return $@"<?xml version=""1.0"" encoding=""utf-8""?>
+        <soap12:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+                          xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
+                          xmlns:soap12=""http://www.w3.org/2003/05/soap-envelope"">
+            <soap12:Body>
+                {bodyContent}
+            </soap12:Body>
+        </soap12:Envelope>";
     }
 
     protected XmlNodeList GetResponseNodes(string soapResponse, string resultTag)
