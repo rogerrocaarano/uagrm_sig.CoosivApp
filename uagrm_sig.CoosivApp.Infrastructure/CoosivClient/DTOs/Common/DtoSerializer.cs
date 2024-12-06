@@ -3,15 +3,15 @@ using uagrm_sig.CoosivApp.Domain.Common;
 
 namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.Common;
 
-public abstract class DtoSerializer
+public static class DtoSerializer
 {
-    public string Serialize()
+    public static string Serialize<T>(T dto) where T : IDto
     {
         var serializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         };
-        return JsonSerializer.Serialize(this, serializerOptions);
+        return JsonSerializer.Serialize(dto, serializerOptions);
     }
 }

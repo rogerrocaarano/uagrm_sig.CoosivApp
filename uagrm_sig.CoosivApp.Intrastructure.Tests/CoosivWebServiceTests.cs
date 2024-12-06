@@ -35,5 +35,22 @@ public class CoosivWebServiceTests
         // Verifica que el resultado sea el esperado
         _testOutputHelper.WriteLine(result.Serialize());
         Assert.NotNull(result);
+        Assert.Contains("items", result.Serialize());
+    }
+    
+    [Fact]
+    public async Task GetRouteById_ShouldReturnNotNull()
+    {
+        // Arrange
+        // Configura el mock y los datos esperados aquí
+    
+        // Act
+        var result = await _coosivWebService.GetRouteById(75);
+    
+        // Assert
+        // Verifica que el resultado sea el esperado
+        _testOutputHelper.WriteLine(result.Serialize());
+        Assert.NotNull(result);
+        Assert.Contains("items", result.Serialize());
     }
 }
