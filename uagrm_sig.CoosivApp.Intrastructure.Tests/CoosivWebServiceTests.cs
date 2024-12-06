@@ -29,7 +29,7 @@ public class CoosivWebServiceTests
         // Configura el mock y los datos esperados aquí
 
         // Act
-        var result = await _coosivWebService.GetRoutes();
+        var result = await _coosivWebService.GetRoutesDto();
 
         // Assert
         // Verifica que el resultado sea el esperado
@@ -45,7 +45,7 @@ public class CoosivWebServiceTests
         // Configura el mock y los datos esperados aquí
     
         // Act
-        var result = await _coosivWebService.GetRouteById(75);
+        var result = await _coosivWebService.GetRouteDtoById(75);
     
         // Assert
         // Verifica que el resultado sea el esperado

@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using uagrm_sig.CoosivApp.Domain.Common;
+using uagrm_sig.CoosivApp.Domain.Entities;
 using uagrm_sig.CoosivApp.Domain.Repositories;
 using uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
 
@@ -8,7 +8,7 @@ namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient;
 public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseUrl, string ns)
     : SoapClient(httpClientFactory, baseUrl, ns), IDataRepository
 {
-    public async Task<IDto> GetRoutes()
+    public async Task<ObtenerRutasResponseTable> GetRoutesDto()
     {
         var requestDto = new ObtenerRutasRequestDto
         {
@@ -48,7 +48,7 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
         }
     }
 
-    public async Task<IDto> GetRouteById(int id)
+    public async Task<ReporteParaCortesSigTable> GetRouteDtoById(int id)
     {
         var requestDto = new ReporteParaCortesSigRequestDto
         {
@@ -90,5 +90,29 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public async Task<List<Route>> GetRoutes()
+    {
+        var dto = await GetRoutesDto();
+        return dto.Items.Select(i => new Route { Id = (int)i.bsrutnrut!, ServiceAccounts = [] }).ToList();
+    }
+
+    public async Task<Route> GetRouteDetails(Route route)
+    {
+        var dto = await GetRouteDtoById(route.Id);
+        route.ServiceAccounts = dto.Items.Select(i => new ServiceAccount
+        {
+            AccountNumber = (int)i.bscocNcnt!,
+            Address = new Point
+            {
+                Latitude = (double)i.bscntlati!,
+                Longitude = (double)i.bscntlogi!
+            },
+            Category = i.dNcat!,
+            Name = i.dNomb!,
+            Notes = i.dCobc
+        }).ToList();
+        return route;
     }
 }

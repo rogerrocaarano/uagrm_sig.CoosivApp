@@ -5,5 +5,5 @@ namespace uagrm_sig.CoosivApp.Domain.Repositories;
 
 public interface IAuthRepository
 {
-    Task<IDto> ValidateLogin(IDto request);
+    Task<bool> ValidateLogin(string user, string password);
 }
