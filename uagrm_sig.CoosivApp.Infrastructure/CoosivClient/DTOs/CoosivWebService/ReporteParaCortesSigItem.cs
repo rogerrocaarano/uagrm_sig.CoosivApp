@@ -1,6 +1,6 @@
 ﻿namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
 
-public class ReporteParaCortesSigResponseDto
+public class ReporteParaCortesSigItem
 {
     public int? bscocNcoc { get; set; }
     public int? bscntCodf { get; set; }

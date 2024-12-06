@@ -1,18 +1,10 @@
 ﻿using System.Text.Json;
 using uagrm_sig.CoosivApp.Domain.Common;
+using uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.Common;
 
 namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
 
-public class ObtenerRutasResponseTable : IDto
+public class ObtenerRutasResponseTable : DtoSerializer, IDto
 {
     public List<ObtenerRutasResponseItem> Items { get; set; }
-    public string Serialize()
-    {
-        var serializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        };
-        return JsonSerializer.Serialize(this, serializerOptions);
-    }
 }
