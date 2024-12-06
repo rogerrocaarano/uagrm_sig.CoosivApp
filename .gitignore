@@ -1,0 +1,7 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+uagrm_sig.CoosivApp.Presentation.Api/appsettings.Development.json
