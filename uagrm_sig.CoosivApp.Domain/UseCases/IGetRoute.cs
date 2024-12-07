@@ -4,5 +4,5 @@ namespace uagrm_sig.CoosivApp.Domain.UseCases;
 
 public interface IGetRoute
 {
-    Task<Route> GetRouteWithDetails(int id);
+    Task<ServiceRoute> GetRouteWithDetails(int id);
 }

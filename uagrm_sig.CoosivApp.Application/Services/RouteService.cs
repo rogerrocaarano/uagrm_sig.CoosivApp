@@ -1,14 +1,16 @@
-﻿using uagrm_sig.CoosivApp.Domain.Entities;
+﻿using uagrm_sig.CoosivApp.Application.Validators;
+using uagrm_sig.CoosivApp.Domain.Entities;
 using uagrm_sig.CoosivApp.Domain.Repositories;
+using uagrm_sig.CoosivApp.Domain.Services;
 using uagrm_sig.CoosivApp.Domain.UseCases;
 
 namespace uagrm_sig.CoosivApp.Application.Services;
 
-public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoutes
+public class RouteService(IDataRepository dataRepository, IRouteOptimizer routeOptimizer) : IGetRoute, IGetRoutes
 {
-    public async Task<Route> GetRouteWithDetails(int id)
+    public async Task<ServiceRoute> GetRouteWithDetails(int id)
     {
-        var route = new Route
+        var route = new ServiceRoute
         {
             Id = id,
             ServiceAccounts = [],
@@ -20,7 +22,20 @@ public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoute
             }
         };
         var routeDetails = await dataRepository.GetRouteDetails(route);
-        return routeDetails;
+        RemoveInvalidPoints(routeDetails);
+        var optimizedRoute = routeOptimizer.GetOptimizedRoute(routeDetails, route.StartingPoint);
+        return optimizedRoute;
+    }
+
+    private static void RemoveInvalidPoints(ServiceRoute routeDetails)
+    {
+        foreach (var account in routeDetails.ServiceAccounts.ToList())
+        {
+            if (!PointValidator.IsValidPoint(account.Address))
+            {
+                routeDetails.ServiceAccounts.Remove(account);
+            }
+        }
     }
 
     public async Task<List<int>> GetRoutesIds()
@@ -29,10 +44,10 @@ public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoute
         return routes.Select(route => route.Id).ToList();
     }
 
-    public async Task<List<Route>> GetRoutes()
+    public async Task<List<ServiceRoute>> GetRoutes()
     {
         var routesIds = await GetRoutesIds();
-        var routes = new List<Route>();
+        var routes = new List<ServiceRoute>();
         foreach (var id in routesIds)
         {
             var route = await GetRouteWithDetails(id);

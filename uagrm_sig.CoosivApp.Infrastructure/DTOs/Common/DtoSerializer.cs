@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using uagrm_sig.CoosivApp.Domain.Common;
 
-namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.Common;
+namespace uagrm_sig.CoosivApp.Infrastructure.DTOs.Common;
 
 public static class DtoSerializer
 {

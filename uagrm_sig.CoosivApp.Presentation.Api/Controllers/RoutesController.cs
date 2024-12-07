@@ -34,18 +34,4 @@ public class RoutesController(RouteService routeService) : ControllerBase
             return StatusCode(500, new { error = e.Message });
         }
     }
-    
-    [HttpGet("get-routes-ids")]
-    public async Task<IActionResult> GetRoutesIds()
-    {
-        try
-        {
-            var routesIds = await routeService.GetRoutesIds();
-            return Ok(routesIds);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new { error = e.Message });
-        }
-    }
 }
