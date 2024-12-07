@@ -1,7 +1,7 @@
 ﻿using System.Xml;
 using uagrm_sig.CoosivApp.Domain.Entities;
 using uagrm_sig.CoosivApp.Domain.Repositories;
-using uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
+using uagrm_sig.CoosivApp.Infrastructure.DTOs.CoosivWebService;
 
 namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient;
 

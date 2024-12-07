@@ -1,4 +1,4 @@
-﻿namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
+﻿namespace uagrm_sig.CoosivApp.Infrastructure.DTOs.CoosivWebService;
 
 public class ReporteParaCortesSigRequestDto
 {

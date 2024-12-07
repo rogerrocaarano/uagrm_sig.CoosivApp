@@ -1,4 +1,4 @@
-﻿namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.DTOs.CoosivWebService;
+﻿namespace uagrm_sig.CoosivApp.Infrastructure.DTOs.CoosivWebService;
 /// <summary>
 /// Extraido de W0Corte_ObtenerRutas
 /// http://190.171.244.211:8080/wsVarios/wsBs.asmx?op=W0Corte_ObtenerRutas
