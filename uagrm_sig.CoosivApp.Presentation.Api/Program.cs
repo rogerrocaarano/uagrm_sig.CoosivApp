@@ -1,3 +1,4 @@
+using Scalar.AspNetCore;
 using uagrm_sig.CoosivApp.Application.Services;
 using uagrm_sig.CoosivApp.Domain.Repositories;
 using uagrm_sig.CoosivApp.Domain.Services;
@@ -13,11 +14,17 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+
+// Services
+
+// Presentation Services
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+
+// Infrastructure services
+// Coosiv Web Services Clients
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDataRepository, CoosivWebService>(provider =>
 {
@@ -32,6 +39,7 @@ builder.Services.AddScoped<IDataRepository, CoosivWebService>(provider =>
     return new CoosivWebService(httpClientFactory, baseUrl, ns);
 });
 
+// GraphHopper API Client
 var graphHopperKey = builder.Configuration["InfrastructureServices:GraphHopper:ApiKey"];
 if (string.IsNullOrWhiteSpace(graphHopperKey))
 {
@@ -43,11 +51,16 @@ builder.Services.AddScoped<IRouteOptimizer>(_ => new GraphHopperService(graphHop
 builder.Services.AddScoped<RouteService>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+
+// Post build configuration
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
 {
-    app.MapOpenApi();
-}
+    options
+        .WithTitle("Rest API SIG Cortes")
+        .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+});
 
 app.UseHttpsRedirection();
 app.MapControllers();
