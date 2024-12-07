@@ -12,7 +12,7 @@ public class RoutesController(RouteService routeService) : ControllerBase
     {
         try
         {
-            var routes = await routeService.GetRoutesIds();
+            var routes = await routeService.GetRoutes();
             return Ok(routes);
         }
         catch (Exception e)
