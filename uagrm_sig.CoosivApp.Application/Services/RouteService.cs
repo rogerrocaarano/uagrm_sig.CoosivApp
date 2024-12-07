@@ -1,10 +1,12 @@
-﻿using uagrm_sig.CoosivApp.Domain.Entities;
+﻿using uagrm_sig.CoosivApp.Application.Validators;
+using uagrm_sig.CoosivApp.Domain.Entities;
 using uagrm_sig.CoosivApp.Domain.Repositories;
+using uagrm_sig.CoosivApp.Domain.Services;
 using uagrm_sig.CoosivApp.Domain.UseCases;
 
 namespace uagrm_sig.CoosivApp.Application.Services;
 
-public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoutes
+public class RouteService(IDataRepository dataRepository, IRouteOptimizer routeOptimizer) : IGetRoute, IGetRoutes
 {
     public async Task<ServiceRoute> GetRouteWithDetails(int id)
     {
@@ -20,7 +22,20 @@ public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoute
             }
         };
         var routeDetails = await dataRepository.GetRouteDetails(route);
-        return routeDetails;
+        RemoveInvalidPoints(routeDetails);
+        var optimizedRoute = routeOptimizer.GetOptimizedRoute(routeDetails, route.StartingPoint);
+        return optimizedRoute;
+    }
+
+    private static void RemoveInvalidPoints(ServiceRoute routeDetails)
+    {
+        foreach (var account in routeDetails.ServiceAccounts.ToList())
+        {
+            if (!PointValidator.IsValidPoint(account.Address))
+            {
+                routeDetails.ServiceAccounts.Remove(account);
+            }
+        }
     }
 
     public async Task<List<int>> GetRoutesIds()
