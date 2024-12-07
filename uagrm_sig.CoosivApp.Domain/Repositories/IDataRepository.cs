@@ -5,6 +5,6 @@ namespace uagrm_sig.CoosivApp.Domain.Repositories;
 
 public interface IDataRepository
 {
-    Task<List<Route>> GetRoutes();
-    Task<Route> GetRouteDetails(Route route);
+    Task<List<ServiceRoute>> GetRoutes();
+    Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute);
 }

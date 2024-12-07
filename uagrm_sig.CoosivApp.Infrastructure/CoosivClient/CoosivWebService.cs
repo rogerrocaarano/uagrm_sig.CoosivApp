@@ -92,16 +92,16 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
         }
     }
 
-    public async Task<List<Route>> GetRoutes()
+    public async Task<List<ServiceRoute>> GetRoutes()
     {
         var dto = await GetRoutesDto();
-        return dto.Items.Select(i => new Route { Id = (int)i.bsrutnrut!, ServiceAccounts = [] }).ToList();
+        return dto.Items.Select(i => new ServiceRoute { Id = (int)i.bsrutnrut!, ServiceAccounts = [] }).ToList();
     }
 
-    public async Task<Route> GetRouteDetails(Route route)
+    public async Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute)
     {
-        var dto = await GetRouteDtoById(route.Id);
-        route.ServiceAccounts = dto.Items.Select(i => new ServiceAccount
+        var dto = await GetRouteDtoById(serviceRoute.Id);
+        serviceRoute.ServiceAccounts = dto.Items.Select(i => new ServiceAccount
         {
             AccountNumber = (int)i.bscocNcnt!,
             Address = new Point
@@ -113,6 +113,6 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
             Name = i.dNomb!,
             Notes = i.dCobc
         }).ToList();
-        return route;
+        return serviceRoute;
     }
 }

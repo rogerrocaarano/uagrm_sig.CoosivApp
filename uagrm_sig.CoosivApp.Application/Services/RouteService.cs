@@ -6,9 +6,9 @@ namespace uagrm_sig.CoosivApp.Application.Services;
 
 public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoutes
 {
-    public async Task<Route> GetRouteWithDetails(int id)
+    public async Task<ServiceRoute> GetRouteWithDetails(int id)
     {
-        var route = new Route
+        var route = new ServiceRoute
         {
             Id = id,
             ServiceAccounts = [],
@@ -29,10 +29,10 @@ public class RouteService(IDataRepository dataRepository) : IGetRoute, IGetRoute
         return routes.Select(route => route.Id).ToList();
     }
 
-    public async Task<List<Route>> GetRoutes()
+    public async Task<List<ServiceRoute>> GetRoutes()
     {
         var routesIds = await GetRoutesIds();
-        var routes = new List<Route>();
+        var routes = new List<ServiceRoute>();
         foreach (var id in routesIds)
         {
             var route = await GetRouteWithDetails(id);
