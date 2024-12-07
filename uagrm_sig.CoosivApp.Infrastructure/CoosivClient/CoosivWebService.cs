@@ -95,7 +95,12 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
     public async Task<List<ServiceRoute>> GetRoutes()
     {
         var dto = await GetRoutesDto();
-        return dto.Items.Select(i => new ServiceRoute { Id = (int)i.bsrutnrut!, ServiceAccounts = [] }).ToList();
+        return dto.Items.Select(i => new ServiceRoute
+        {
+            Id = (int)i.bsrutnrut!, 
+            ServiceAccounts = [],
+            Name = i.dNomb
+        }).ToList();
     }
 
     public async Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute)

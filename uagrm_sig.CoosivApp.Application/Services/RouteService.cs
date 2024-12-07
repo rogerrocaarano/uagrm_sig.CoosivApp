@@ -46,14 +46,6 @@ public class RouteService(IDataRepository dataRepository, IRouteOptimizer routeO
 
     public async Task<List<ServiceRoute>> GetRoutes()
     {
-        var routesIds = await GetRoutesIds();
-        var routes = new List<ServiceRoute>();
-        foreach (var id in routesIds)
-        {
-            var route = await GetRouteWithDetails(id);
-            routes.Add(route);
-        }
-
-        return routes;
+        return await dataRepository.GetRoutes();
     }
 }
