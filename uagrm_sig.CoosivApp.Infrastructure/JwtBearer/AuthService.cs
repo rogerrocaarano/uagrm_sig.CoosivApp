@@ -7,9 +7,9 @@ using uagrm_sig.CoosivApp.Domain.Services;
 
 namespace uagrm_sig.CoosivApp.Infrastructure.JwtBearer;
 
-public class AuthService(string privateKey) : IAuthService
+public class AuthService(string privateKey) : ITokenGenService
 {
-    public string CreateToken(User user)
+    public string GenerateToken(User user)
     {
         var handler = new JwtSecurityTokenHandler();
         var credentials = new SigningCredentials(
@@ -23,6 +23,7 @@ public class AuthService(string privateKey) : IAuthService
             Expires = DateTime.UtcNow.AddMinutes(5),
             Subject = GenerateClaims(user)
         };
+        
         var token = handler.CreateToken(tokenDescriptor);
         return handler.WriteToken(token);
     }

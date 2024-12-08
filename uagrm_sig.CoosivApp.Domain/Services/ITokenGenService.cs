@@ -2,7 +2,7 @@
 
 namespace uagrm_sig.CoosivApp.Domain.Services;
 
-public interface IAuthService
+public interface ITokenGenService
 {
-    string CreateToken(User user);
+    string GenerateToken(User user);
 }

@@ -2,7 +2,8 @@
 
 namespace uagrm_sig.CoosivApp.Domain.UseCases;
 
-public interface IValidateLogin
+public interface ILogin
 {
-    Task<bool> LoginIsValid(LoginCredentials loginCredentials);
+    User? ValidateUser(User user);
+    User? SetAuthToken(User user);
 }
