@@ -13,7 +13,13 @@ public class AuthController(AuthenticationService authenticationService) : Contr
     {
         try
         {
-            var user = authenticationService.SetAuthToken(postLogin.ToUser());
+            var user = authenticationService.ValidateUser(postLogin.ToUser());
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            
+            user = authenticationService.SetAuthToken(user);
             if (user == null)
             {
                 return Unauthorized();
