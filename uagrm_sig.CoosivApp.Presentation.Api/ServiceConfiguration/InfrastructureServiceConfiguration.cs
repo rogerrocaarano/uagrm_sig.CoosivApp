@@ -1,13 +1,17 @@
-﻿using uagrm_sig.CoosivApp.Domain.Repositories;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using uagrm_sig.CoosivApp.Domain.Repositories;
 using uagrm_sig.CoosivApp.Domain.Services;
 using uagrm_sig.CoosivApp.Infrastructure.CoosivClient;
 using uagrm_sig.CoosivApp.Infrastructure.GraphHopperClient;
+using uagrm_sig.CoosivApp.Infrastructure.JwtBearer;
 
 namespace uagrm_sig.CoosivApp.Presentation.Api.ServiceConfiguration;
 
 public static class InfrastructureServiceConfiguration
 {
-    public static void AddCoosivDataService(this IServiceCollection services, IConfiguration configuration)
+    private static void AddCoosivDataService(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpClient();
         services.AddScoped<IDataRepository, CoosivWebService>(provider =>
@@ -23,8 +27,8 @@ public static class InfrastructureServiceConfiguration
             return new CoosivWebService(httpClientFactory, baseUrl, ns);
         });
     }
-    
-    public static void AddGraphHopperService(this IServiceCollection services, IConfiguration configuration)
+
+    private static void AddGraphHopperService(this IServiceCollection services, IConfiguration configuration)
     {
         var graphHopperKey = configuration["InfrastructureServices:GraphHopper:ApiKey"];
         if (string.IsNullOrWhiteSpace(graphHopperKey))
@@ -34,10 +38,42 @@ public static class InfrastructureServiceConfiguration
 
         services.AddScoped<IRouteOptimizer>(_ => new GraphHopperService(graphHopperKey));
     }
-    
+
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddCoosivDataService(configuration);
         services.AddGraphHopperService(configuration);
+        services.AddAuthenticationService(configuration);
+    }
+
+    private static void AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<IAuthService, AuthService>(_ =>
+        {
+            var privateKey = configuration["InfrastructureServices:Jwt:PrivateKey"];
+            if (string.IsNullOrWhiteSpace(privateKey))
+            {
+                throw new InvalidOperationException("Jwt PrivateKey is missing");
+            }
+
+            return new AuthService(privateKey);
+        });
+
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["InfrastructureServices:Jwt:PrivateKey"])),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            };
+        });
     }
 }
