@@ -21,7 +21,7 @@ public static class InfrastructureServiceConfiguration
             var ns = configuration["InfrastructureServices:Coosiv:Data:Namespace"];
             if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(ns))
             {
-                throw new InvalidOperationException("Coosiv configuration is missing");
+                throw new InvalidOperationException("CoosivData configuration is missing");
             }
 
             return new CoosivWebService(httpClientFactory, baseUrl, ns);
@@ -43,12 +43,13 @@ public static class InfrastructureServiceConfiguration
     {
         services.AddCoosivDataService(configuration);
         services.AddGraphHopperService(configuration);
-        services.AddAuthenticationService(configuration);
+        services.AddCoosivAuthService(configuration);
+        services.AddJwtBearer(configuration);
     }
 
-    private static void AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)
+    private static void AddJwtBearer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IAuthService, AuthService>(_ =>
+        services.AddTransient<ITokenGenService, AuthService>(_ =>
         {
             var privateKey = configuration["InfrastructureServices:Jwt:PrivateKey"];
             if (string.IsNullOrWhiteSpace(privateKey))
@@ -74,6 +75,23 @@ public static class InfrastructureServiceConfiguration
                 ValidateIssuer = false,
                 ValidateAudience = false,
             };
+        });
+    }
+
+    private static void AddCoosivAuthService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddHttpClient();
+        services.AddScoped<IAuthRepository, CoosivAuthService>(provider =>
+        {
+            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+            var baseUrl = configuration["InfrastructureServices:Coosiv:Auth:BaseUrl"];
+            var ns = configuration["InfrastructureServices:Coosiv:Auth:Namespace"];
+            if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(ns))
+            {
+                throw new InvalidOperationException("CoosivAuth configuration is missing");
+            }
+
+            return new CoosivAuthService(httpClientFactory, baseUrl, ns);
         });
     }
 }

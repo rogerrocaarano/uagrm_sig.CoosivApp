@@ -5,7 +5,7 @@ using uagrm_sig.CoosivApp.Domain.UseCases;
 
 namespace uagrm_sig.CoosivApp.Application.Services;
 
-public class AuthService(IAuthRepository authRepository, ITokenGenService tokenGenService) : ILogin
+public class AuthenticationService(IAuthRepository authRepository, ITokenGenService tokenGenService) : ILogin
 {
     public User? ValidateUser(User user)
     {

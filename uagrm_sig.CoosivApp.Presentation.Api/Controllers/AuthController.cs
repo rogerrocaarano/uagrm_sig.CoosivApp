@@ -1,31 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using uagrm_sig.CoosivApp.Domain.Entities;
-using uagrm_sig.CoosivApp.Domain.Services;
+using uagrm_sig.CoosivApp.Application.Services;
+using uagrm_sig.CoosivApp.Presentation.Api.DTOs.Auth;
 
 namespace uagrm_sig.CoosivApp.Presentation.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(AuthenticationService authenticationService) : ControllerBase
 {
-    [HttpGet("login")]
-    public async Task<IActionResult> Login()
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] PostLogin postLogin)
     {
         try
         {
-            var user = new User
+            var user = authenticationService.SetAuthToken(postLogin.ToUser());
+            if (user == null)
             {
-                Id = 1,
-                Username = "admin",
-                Password = "admin123"
-            };
+                return Unauthorized();
+            }
 
-            return Ok(authService.CreateToken(user));
+            return Ok(user);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return StatusCode(500, new { error = e.Message });
         }
     }
 }
