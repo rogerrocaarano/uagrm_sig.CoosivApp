@@ -20,7 +20,7 @@ public class AuthService(string privateKey) : ITokenGenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             SigningCredentials = credentials,
-            Expires = DateTime.UtcNow.AddMinutes(5),
+            Expires = DateTime.UtcNow.AddDays(1),
             Subject = GenerateClaims(user)
         };
         
