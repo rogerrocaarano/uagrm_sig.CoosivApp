@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using uagrm_sig.CoosivApp.Application.Services;
 using uagrm_sig.CoosivApp.Presentation.Api.DTOs.Routes;
 
 namespace uagrm_sig.CoosivApp.Presentation.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class RoutesController(RouteService routeService) : ControllerBase
 {

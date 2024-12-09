@@ -7,5 +7,6 @@ public static class ApplicationServicesConfiguration
     public static void AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<RouteService>();
+        services.AddScoped<AuthenticationService>();
     }
 }

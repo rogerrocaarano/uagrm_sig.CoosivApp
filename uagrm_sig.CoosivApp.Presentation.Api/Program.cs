@@ -1,4 +1,6 @@
 using Scalar.AspNetCore;
+using uagrm_sig.CoosivApp.Domain.Entities;
+using uagrm_sig.CoosivApp.Domain.Services;
 using uagrm_sig.CoosivApp.Presentation.Api.ServiceConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,9 @@ app.MapScalarApiReference(options =>
         .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
 
+
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
