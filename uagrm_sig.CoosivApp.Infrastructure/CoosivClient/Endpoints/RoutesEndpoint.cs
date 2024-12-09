@@ -5,11 +5,11 @@ namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient.Endpoints;
 
 public class RoutesEndpoint(SoapClient client)
 {
-    public async Task<ObtenerRutasResponseTable> GetRoutesDto()
+    public async Task<ObtenerRutasResponseTable> W0Corte_ObtenerRutas(int LiCper)
     {
         var requestDto = new ObtenerRutasRequestDto
         {
-            LiCper = 0
+            LiCper = LiCper
         };
         try
         {
@@ -45,13 +45,13 @@ public class RoutesEndpoint(SoapClient client)
         }
     }
     
-    public async Task<ReporteParaCortesSigTable> GetRouteDtoById(int id)
+    public async Task<ReporteParaCortesSigTable> W0Corte_ReporteParaCortesSIG(int liNrut, int liCper, int liNcnt)
     {
         var requestDto = new ReporteParaCortesSigRequestDto
         {
-            liNrut = id,
-            liCper = 0,
-            liNcnt = 0
+            liNrut = liNrut,
+            liCper = liCper,
+            liNcnt = liNcnt
         };
 
         try
