@@ -120,4 +120,9 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
         }).ToList();
         return serviceRoute;
     }
+
+    public Task PostServiceCancellation(ServiceCancellation serviceCancellation)
+    {
+        throw new NotImplementedException();
+    }
 }

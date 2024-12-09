@@ -7,4 +7,5 @@ public interface IDataRepository
 {
     Task<List<ServiceRoute>> GetRoutes();
     Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute);
+    Task PostServiceCancellation(ServiceCancellation serviceCancellation);
 }
