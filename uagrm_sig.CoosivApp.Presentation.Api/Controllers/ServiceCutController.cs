@@ -8,7 +8,7 @@ namespace uagrm_sig.CoosivApp.Presentation.Api.Controllers;
 [Route("api/[controller]")]
 public class ServiceCutController(DataService dataService) : ControllerBase
 {
-    [HttpGet("cut-service")]
+    [HttpPost("cut-service")]
     public async Task<IActionResult> PostServiceCut([FromBody] GetServiceCut getServiceCut)
     {
         try
@@ -20,7 +20,9 @@ public class ServiceCutController(DataService dataService) : ControllerBase
             }
 
             var result = await dataService.SaveCutToServer(serviceCut);
-            return result == null ? StatusCode(500, new { error = "Error saving record to Soap Server" }) : Ok(result);
+            return result == null
+                ? StatusCode(500, new { error = "Error saving record to Soap Server" })
+                : Ok("Corte guardado con éxito");
         }
         catch (Exception e)
         {

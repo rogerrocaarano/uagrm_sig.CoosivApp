@@ -81,12 +81,12 @@ public class CoosivWebService : IDataRepository
     {
         var dto = await _serviceCutEndpoint.W3Corte_UpdateCorte(
             cut.Id,
-            0,
+            1,
             DateTime.Now,
-            0,
-            0,
-            0,
-            0,
+            2,
+            1,
+            1,
+            1,
             "CoosivApp Backend");
         return dto.response == 1 ? cut : null;
     }
