@@ -12,9 +12,18 @@ public class W3Corte_UpdateCorteRequest : ISoapRequest
     public int LiLcor { get; set; } // ???
     public int LiNofn { get; set; } // Código de oficina
     public string LsAppName { get; set; } // Nombre de la aplicación
-    
+
     public string ToSoapBody()
     {
-        throw new NotImplementedException();
+        return $@"<W3Corte_UpdateCorte xmlns=""http://activebs.net/"">
+                        <liNcoc>{LiNcoc}</liNcoc>
+                        <liCemc>{LiCemc}</liCemc>
+                        <ldFcor>{LdFcor:yyyy-MM-ddTHH:mm:ss}</ldFcor>
+                        <liPres>{LiPres}</liPres>
+                        <liCobc>{LiCobc}</liCobc>
+                        <liLcor>{LiLcor}</liLcor>
+                        <liNofn>{LiNofn}</liNofn>
+                        <lsAppName>{LsAppName}</lsAppName>
+                  </W3Corte_UpdateCorte>";
     }
 }
