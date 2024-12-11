@@ -6,7 +6,7 @@ using uagrm_sig.CoosivApp.Domain.UseCases;
 
 namespace uagrm_sig.CoosivApp.Application.Services;
 
-public class RouteService(IDataRepository dataRepository, IRouteOptimizer routeOptimizer) : IGetRoute, IGetRoutes
+public class DataService(IDataRepository dataRepository, IRouteOptimizer routeOptimizer) : IGetRoute, IGetRoutes, ICutService
 {
     public async Task<ServiceRoute> GetRouteWithDetails(int id)
     {
@@ -47,5 +47,32 @@ public class RouteService(IDataRepository dataRepository, IRouteOptimizer routeO
     public async Task<List<ServiceRoute>> GetRoutes()
     {
         return await dataRepository.GetRoutes();
+    }
+
+    public async Task<ServiceCut?> GetServiceCut(int routeId, int accountId)
+    {
+        try
+        {
+            var cut = await dataRepository.GetServiceCut(routeId, accountId);
+            return cut;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<ServiceCut?> SaveCutToServer(ServiceCut cut)
+    {
+        try
+        {
+            return await dataRepository.SaveCutToServer(cut);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
