@@ -1,103 +1,27 @@
-﻿using System.Xml;
-using uagrm_sig.CoosivApp.Domain.Entities;
+﻿using uagrm_sig.CoosivApp.Domain.Entities;
 using uagrm_sig.CoosivApp.Domain.Repositories;
-using uagrm_sig.CoosivApp.Infrastructure.DTOs.CoosivWebService;
+using uagrm_sig.CoosivApp.Infrastructure.CoosivClient.Endpoints;
 
 namespace uagrm_sig.CoosivApp.Infrastructure.CoosivClient;
 
-public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseUrl, string ns)
-    : SoapClient(httpClientFactory, baseUrl, ns), IDataRepository
+public class CoosivWebService : IDataRepository
 {
-    public async Task<ObtenerRutasResponseTable> GetRoutesDto()
+    private readonly RoutesEndpoint _routesEndpoint;
+    private readonly ServiceCutEndpoint _serviceCutEndpoint;
+
+    public CoosivWebService(IHttpClientFactory httpClientFactory, string baseUrl, string ns)
     {
-        var requestDto = new ObtenerRutasRequestDto
-        {
-            LiCper = 0
-        };
-        try
-        {
-            var response = await SendRequestAsync("W0Corte_ObtenerRutas", requestDto.ToSoapBody());
-            var xmlNodes = GetResponseNodes(response, "Table");
-
-            var responseItems = (from XmlNode node in xmlNodes
-                select new ObtenerRutasResponseItem
-                {
-                    bsrutnrut = ParseNullableInt(node["bsrutnrut"]?.InnerText),
-                    bsrutdesc = node["bsrutdesc"]?.InnerText?.Trim(),
-                    bsrutabrv = node["bsrutabrv"]?.InnerText?.Trim(),
-                    bsruttipo = ParseNullableInt(node["bsruttipo"]?.InnerText),
-                    bsrutnzon = ParseNullableInt(node["bsrutnzon"]?.InnerText),
-                    bsrutfcor = node["bsrutfcor"]?.InnerText?.Trim(),
-                    bsrutcper = ParseNullableInt(node["bsrutcper"]?.InnerText),
-                    bsrutstat = ParseNullableInt(node["bsrutstat"]?.InnerText),
-                    bsrutride = ParseNullableInt(node["bsrutride"]?.InnerText),
-                    dNomb = node["dNomb"]?.InnerText?.Trim(),
-                    GbzonNzon = ParseNullableInt(node["GbzonNzon"]?.InnerText),
-                    dNzon = node["dNzon"]?.InnerText?.Trim()
-                }).ToList();
-
-            return new ObtenerRutasResponseTable
-            {
-                Items = responseItems
-            };
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    public async Task<ReporteParaCortesSigTable> GetRouteDtoById(int id)
-    {
-        var requestDto = new ReporteParaCortesSigRequestDto
-        {
-            liNrut = id,
-            liCper = 0,
-            liNcnt = 0
-        };
-
-        try
-        {
-            var response = await SendRequestAsync("W0Corte_ReporteParaCortesSIG", requestDto.ToSoapBody());
-            var xmlNodes = GetResponseNodes(response, "Table");
-
-            var responseItems = (from XmlNode node in xmlNodes
-                select new ReporteParaCortesSigItem
-                {
-                    bscocNcoc = ParseNullableInt(node["bscocNcoc"]?.InnerText),
-                    bscntCodf = ParseNullableInt(node["bscntCodf"]?.InnerText),
-                    bscocNcnt = ParseNullableInt(node["bscocNcnt"]?.InnerText),
-                    dNomb = node["dNomb"]?.InnerText.Trim(),
-                    bscocNmor = ParseNullableInt(node["bscocNmor"]?.InnerText),
-                    bscocImor = ParseNullableDecimal(node["bscocImor"]?.InnerText),
-                    bsmednser = node["bsmednser"]?.InnerText.Trim(),
-                    bsmedNume = node["bsmedNume"]?.InnerText.Trim(),
-                    bscntlati = ParseNullableDecimal(node["bscntlati"]?.InnerText),
-                    bscntlogi = ParseNullableDecimal(node["bscntlogi"]?.InnerText),
-                    dNcat = node["dNcat"]?.InnerText.Trim(),
-                    dCobc = node["dCobc"]?.InnerText.Trim(),
-                    dLotes = node["dLotes"]?.InnerText.Trim()
-                }).ToList();
-
-            return new ReporteParaCortesSigTable
-            {
-                Items = responseItems
-            };
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        var soapClient = new SoapClient(httpClientFactory, baseUrl, ns);
+        _routesEndpoint = new RoutesEndpoint(soapClient);
+        _serviceCutEndpoint = new ServiceCutEndpoint(soapClient);
     }
 
     public async Task<List<ServiceRoute>> GetRoutes()
     {
-        var dto = await GetRoutesDto();
+        var dto = await _routesEndpoint.W0Corte_ObtenerRutas(0);
         return dto.Items.Select(i => new ServiceRoute
         {
-            Id = (int)i.bsrutnrut!, 
+            Id = (int)i.bsrutnrut!,
             ServiceAccounts = [],
             Name = i.dNomb
         }).ToList();
@@ -105,7 +29,7 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
 
     public async Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute)
     {
-        var dto = await GetRouteDtoById(serviceRoute.Id);
+        var dto = await _routesEndpoint.W0Corte_ReporteParaCortesSIG(serviceRoute.Id, 0, 0);
         serviceRoute.ServiceAccounts = dto.Items.Select(i => new ServiceAccount
         {
             AccountNumber = (int)i.bscocNcnt!,
@@ -119,5 +43,51 @@ public class CoosivWebService(IHttpClientFactory httpClientFactory, string baseU
             Notes = i.dCobc
         }).ToList();
         return serviceRoute;
+    }
+
+    public async Task<ServiceCut?> GetServiceCut(int routeId, int accountId)
+    {
+        var dto = await _routesEndpoint.W0Corte_ReporteParaCortesSIG(routeId, 0, accountId);
+        if (dto.Items.Count == 0)
+        {
+            return null;
+        }
+
+        if (dto.Items.Count > 1)
+        {
+            throw new Exception("More than one record found");
+        }
+
+        var i = dto.Items[0];
+        return new ServiceCut
+        {
+            Id = (int)i.bscocNcoc!,
+            Account = new ServiceAccount
+            {
+                AccountNumber = accountId,
+                Address = new Point
+                {
+                    Latitude = (double)i.bscntlati!,
+                    Longitude = (double)i.bscntlogi!
+                },
+                Category = i.dNcat!,
+                Name = i.dNomb!,
+                Notes = i.dCobc
+            }
+        };
+    }
+
+    public async Task<ServiceCut?> SaveCutToServer(ServiceCut cut)
+    {
+        var dto = await _serviceCutEndpoint.W3Corte_UpdateCorte(
+            cut.Id,
+            1,
+            DateTime.Now,
+            2,
+            1,
+            1,
+            1,
+            "CoosivApp Backend");
+        return dto.response == 1 ? cut : null;
     }
 }

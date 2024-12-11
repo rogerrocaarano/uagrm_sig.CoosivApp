@@ -7,4 +7,6 @@ public interface IDataRepository
 {
     Task<List<ServiceRoute>> GetRoutes();
     Task<ServiceRoute> GetRouteDetails(ServiceRoute serviceRoute);
+    Task<ServiceCut?> GetServiceCut(int routeId, int accountId);
+    Task<ServiceCut?> SaveCutToServer(ServiceCut cut);
 }

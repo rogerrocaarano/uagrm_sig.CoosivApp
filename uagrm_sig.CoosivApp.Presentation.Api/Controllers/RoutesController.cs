@@ -8,14 +8,14 @@ namespace uagrm_sig.CoosivApp.Presentation.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class RoutesController(RouteService routeService) : ControllerBase
+public class RoutesController(DataService dataService) : ControllerBase
 {
     [HttpGet("get-routes")]
     public async Task<IActionResult> GetRoutes()
     {
         try
         {
-            var routes = await routeService.GetRoutes();
+            var routes = await dataService.GetRoutes();
             var response = routes.Select(route => new GetRoutesItem
             {
                 Id = route.Id, 
@@ -34,7 +34,7 @@ public class RoutesController(RouteService routeService) : ControllerBase
     {
         try
         {
-            var route = await routeService.GetRouteWithDetails(id);
+            var route = await dataService.GetRouteWithDetails(id);
             return Ok(route);
         }
         catch (Exception e)
