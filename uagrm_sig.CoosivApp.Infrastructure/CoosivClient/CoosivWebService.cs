@@ -23,7 +23,7 @@ public class CoosivWebService : IDataRepository
         {
             Id = (int)i.bsrutnrut!,
             ServiceAccounts = [],
-            Name = i.dNomb
+            Name = i.bsrutdesc
         }).ToList();
     }
 
