@@ -35,8 +35,8 @@ public class CoosivAuthService(IHttpClientFactory httpClientFactory, string base
         {
             Status = responseItems[0],
             Message = responseItems[1],
-            Code1 = int.Parse(responseItems[2]),
-            Code2 = int.Parse(responseItems[3])
+            Code1 = responseItems[2] == "" ? null : int.Parse(responseItems[2]),
+            Code2 = responseItems[3] == "" ? null : int.Parse(responseItems[3])
         };
     }
 }
