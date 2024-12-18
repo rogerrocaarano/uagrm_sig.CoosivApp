@@ -23,8 +23,32 @@ public class DataService(IDataRepository dataRepository, IRouteOptimizer routeOp
         };
         var routeDetails = await dataRepository.GetRouteDetails(route);
         RemoveInvalidPoints(routeDetails);
+        var serviceAccounts = route.ServiceAccounts;
+        if (serviceAccounts.Count > 5)
+        {
+            serviceAccounts = GetRandomServiceAccounts(routeDetails, 5);
+            route.ServiceAccounts = serviceAccounts;
+        }
+
+        if (serviceAccounts.Count < 2)
+        {
+            return routeDetails;
+        }
         var optimizedRoute = routeOptimizer.GetOptimizedRoute(routeDetails, route.StartingPoint);
         return optimizedRoute;
+    }
+
+    private static List<ServiceAccount> GetRandomServiceAccounts(ServiceRoute routeDetails, int maxPoints)
+    {
+        var serviceAccountsSize = routeDetails.ServiceAccounts.Count;
+        var random = new Random();
+        var randomServiceAccounts = new List<ServiceAccount>();
+        for (var i = 0; i < maxPoints; i++)
+        {
+            var randomIndex = random.Next(0, serviceAccountsSize);
+            randomServiceAccounts.Add(routeDetails.ServiceAccounts[randomIndex]);
+        }
+        return randomServiceAccounts;
     }
 
     private static void RemoveInvalidPoints(ServiceRoute routeDetails)
